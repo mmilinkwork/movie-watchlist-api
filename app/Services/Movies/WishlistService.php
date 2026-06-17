@@ -2,9 +2,11 @@
 
 namespace App\Services\Movies;
 
+use App\Http\Resources\WishlistResource;
 use App\Managers\Wishlist\Contracts\DatabaseWishlistStoreInterface;
 use App\Managers\Wishlist\DataTransferObjects\StoreWishlistDTO;
 use App\Managers\Wishlist\WishlistManager;
+use App\Models\Wishlist;
 use App\Services\API\OMBD\Contracts\OMBDServiceInterface;
 use App\Services\API\OMBD\DataTransferObjects\FetchMovieDTO;
 use App\Services\API\OMBD\OMBDService;
@@ -28,11 +30,11 @@ class WishlistService implements AssignMovieToUserWishlistInterface
      * @param AssignMovieToUserDTO $assignMovieToUserDTO
      * @return void
      */
-    public function assign(AssignMovieToUserDTO $assignMovieToUserDTO): void
+    public function assign(AssignMovieToUserDTO $assignMovieToUserDTO): Wishlist
     {
         $movie = $this->OMBDService->fetch(new FetchMovieDTO($assignMovieToUserDTO->toArray()));
 
-        $this->wishListManager->store(
+       return $this->wishListManager->store(
             new StoreWishlistDTO(
                 userId: $assignMovieToUserDTO->user->id,
                 movieId:$movie->id,

@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Log;
 
 class WishlistManager implements DatabaseWishlistStoreInterface
 {
-    public function store(StoreWishlistDTO $movieDTO): void
+    public function store(StoreWishlistDTO $movieDTO): ?Wishlist
     {
         try {
-            Wishlist::insert($movieDTO->toArray());
+            return Wishlist::create($movieDTO->toArray());
         } catch (\Exception $exception) {
             Log::error("Wishlist database insert error: {$exception->getMessage()}");
+            return null;
         }
     }
 }

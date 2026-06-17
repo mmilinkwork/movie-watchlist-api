@@ -3,19 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Watchlist\AddWatchlistRequest;
-use App\Services\API\OMBD\Contracts\OMBDServiceInterface;
-use App\Services\API\OMBD\DataTransferObjects\AddMovieToWatchlistDTO;
+use App\Http\Resources\WishlistResource;
+use App\Services\Movies\Contracts\AssignMovieToUserWishlistInterface;
+use App\Services\Movies\DataTransferObjects\AssignMovieToUserDTO;
+use App\Services\Movies\WishlistService;
+use Illuminate\Support\Facades\Auth;
 
 class AddToWatchlistController extends Controller
 {
-    public function __construct(private OMBDServiceInterface $OMBDService)
+    protected AssignMovieToUserWishlistInterface $wishlistService;
+
+    public function __construct()
     {
+        $this->wishlistService = new WishlistService();
     }
 
     public function index(AddWatchlistRequest $addWatchlistRequest)
     {
-        $this->OMBDService->fetch(new AddMovieToWatchlistDTO($addWatchlistRequest->validated()));
+        $wishlist = $this->wishlistService->assign(new AssignMovieToUserDTO(
+            user: Auth::user(),
+            isTitle: $addWatchlistRequest->validated('isTitle'),
+            title: $addWatchlistRequest->validated('title'),
+            ombd_id: $addWatchlistRequest->validated('ombd_id')
+        ));
 
+        if ($wishlist) {
+            return response()->json(WishlistResource::make($wishlist), 201);
+        }
 
+        return response()->json([
+            'message' => 'Movie already exists in your wishlist',
+            'error' => 'Duplicate entry'
+        ], 409);
     }
 }

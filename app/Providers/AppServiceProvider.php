@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
         OMBDServiceInterface::class => OMBDService::class,
-        MovieApiIntegrationServiceInterface::class => OMBDIntegrationService::class
+        MovieApiIntegrationServiceInterface::class => OMBDIntegrationService::class,
     ];
 
     /**

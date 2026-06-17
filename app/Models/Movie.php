@@ -17,4 +17,15 @@ class Movie extends Model
         'imdb_rating',
         'runtime'
     ];
+
+    /**
+     * Users who have this movie on their wishlist.
+     */
+    public function wishlistUsers()
+    {
+        return $this->belongsToMany(User::class, 'wishlists')
+            ->withPivot('status', 'personal_rating', 'watched_at', 'is_favorite')
+            ->withTimestamps();
+    }
+
 }

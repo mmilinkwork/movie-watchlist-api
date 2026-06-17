@@ -1,11 +1,9 @@
 <?php
 
 use App\Http\Controllers\AddToWatchlistController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\TokenController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::post('/user/generate-token', [TokenController::class, 'store']);
 
-Route::post('/add-movie-to-watchlist', [AddToWatchlistController::class, 'index']);
+Route::post('/add-movie-to-watchlist', [AddToWatchlistController::class, 'index'])->middleware('auth:sanctum');

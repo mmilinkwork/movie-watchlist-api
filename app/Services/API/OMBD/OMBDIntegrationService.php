@@ -4,7 +4,7 @@ namespace App\Services\API\OMBD;
 
 use App\Services\API\OMBD\Contracts\MovieApiIntegrationServiceInterface;
 use App\Services\API\OMBD\DataTransferObjects\FetchMovieDTO;
-use App\Services\Movies\DataTransferObjects\MovieDTO;
+use App\Services\API\OMBD\DataTransferObjects\MovieDTO;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -25,10 +25,10 @@ class OMBDIntegrationService implements MovieApiIntegrationServiceInterface
      * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return MovieDTO
      */
-    public function get(FetchMovieDTO $addMovieToWatchlistDTO): MovieDTO
+    public function get(FetchMovieDTO $fetchMovieDTO): MovieDTO
     {
         try {
-            $response = Http::timeout(5)->get($this->baseUrl, $this->createQueryString($addMovieToWatchlistDTO));
+            $response = Http::timeout(5)->get($this->baseUrl, $this->createQueryString($fetchMovieDTO));
         } catch (\Throwable $e)
         {
             Log::error("Unable to reach OMDb API. {$e->getMessage()}");
@@ -48,18 +48,18 @@ class OMBDIntegrationService implements MovieApiIntegrationServiceInterface
      * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return array
      */
-    private function createQueryString(FetchMovieDTO $addMovieToWatchlistDTO): array
+    private function createQueryString(FetchMovieDTO $fetchMovieDTO): array
     {
-        if ($addMovieToWatchlistDTO->isTitle)
+        if ($fetchMovieDTO->isTitle)
         {
             return [
-                't' => $addMovieToWatchlistDTO->title,
+                't' => $fetchMovieDTO->title,
                 'apiKey' => $this->apiKey
             ];
         }
 
         return [
-            'i' => $addMovieToWatchlistDTO->ombd_id,
+            'i' => $fetchMovieDTO->ombd_id,
             'apiKey' => $this->apiKey
         ];
     }

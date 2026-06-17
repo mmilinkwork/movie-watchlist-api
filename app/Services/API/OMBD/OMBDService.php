@@ -2,38 +2,44 @@
 
 namespace App\Services\API\OMBD;
 
+use App\Managers\Movies\Contracts\DatabaseMovieStoreInterface;
+use App\Managers\Movies\MovieManager;
+use App\Models\Movie;
 use App\Services\API\OMBD\Contracts\MovieApiIntegrationServiceInterface;
 use App\Services\API\OMBD\DataTransferObjects\FetchMovieDTO;
-use App\Services\Movies\Contracts\StoreMovieInterface;
-use App\Services\Movies\DataTransferObjects\MovieDTO;
-use App\Services\Movies\MovieService;
+use App\Services\API\OMBD\DataTransferObjects\MovieDTO;
 
 class OMBDService implements Contracts\OMBDServiceInterface
 {
-    protected StoreMovieInterface $movieService;
+    protected DatabaseMovieStoreInterface $movieManager;
 
-    public function __construct(protected MovieApiIntegrationServiceInterface $movieApiIntegrationService)
+    public function __construct(
+        protected MovieApiIntegrationServiceInterface $movieApiIntegrationService,
+    )
     {
-        $this->movieService = resolve(MovieService::class);
+        $this->movieManager = new MovieManager();
     }
 
     /**
      * Based on ombd_id or title, we are fetching Movie from API or from Database/Cache.
      * If movie already exists in Database, we will not call API request.
+     * If movie doesn't exist, we will fetch it from API and store it to database.
      *
      * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return MovieDTO|null
      */
-    public function fetch(FetchMovieDTO $addMovieToWatchlistDTO): ?MovieDTO
+    public function fetch(FetchMovieDTO $fetchMovieDTO): Movie
     {
-
-        if (!$this->movieExists($addMovieToWatchlistDTO))
+        if (!$this->movieExists($fetchMovieDTO))
         {
-            return $this->movieApiIntegrationService->get($addMovieToWatchlistDTO);
+            $movieDTO = $this->movieApiIntegrationService->get($fetchMovieDTO);
+
+            $this->movieManager->store($movieDTO);
+
+            return $movieDTO;
         }
 
-
-        return $this->returnExistingMovie();
+        return $this->returnExistingMovie($fetchMovieDTO);
     }
 
     /**
@@ -41,19 +47,11 @@ class OMBDService implements Contracts\OMBDServiceInterface
      *
      * @return MovieDTO
      */
-    private function returnExistingMovie(): MovieDTO
+    private function returnExistingMovie(FetchMovieDTO $fetchMovieDTO): Movie
     {
-        return new MovieDTO([
-            'imdbID'   => 'tt1375666',
-            'Title'    => 'Inception',
-            'Year'     => '2010',
-            'Genre'    => 'Action, Adventure, Sci-Fi',
-            'Director' => 'Christopher Nolan',
-            'Plot'     => 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.',
-            'Poster'   => 'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
-            'imdbRating' => '8.8',
-            'Runtime'  => '148 min',
-        ]);
+        return Movie::where('title', $fetchMovieDTO->title)
+                    ->orWhere('imdb_id', $fetchMovieDTO->ombd_id)
+                    ->first();
     }
 
     /**
@@ -62,9 +60,10 @@ class OMBDService implements Contracts\OMBDServiceInterface
      * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return false
      */
-    private function movieExists(FetchMovieDTO $addMovieToWatchlistDTO)
+    private function movieExists(FetchMovieDTO $fetchMovieDTO): bool
     {
-        //to do
-        return false;
+        return Movie::where('title', $fetchMovieDTO->title)
+                    ->orWhere('imdb_id', $fetchMovieDTO->ombd_id)
+                    ->exists();
     }
 }

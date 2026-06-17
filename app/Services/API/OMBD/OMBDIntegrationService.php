@@ -3,8 +3,8 @@
 namespace App\Services\API\OMBD;
 
 use App\Services\API\OMBD\Contracts\MovieApiIntegrationServiceInterface;
-use App\Services\API\OMBD\DataTransferObjects\AddMovieToWatchlistDTO;
-use App\Services\API\OMBD\DataTransferObjects\MovieDTO;
+use App\Services\Movies\DataTransferObjects\AddMovieToWatchlistDTO;
+use App\Services\Movies\DataTransferObjects\MovieDTO;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 

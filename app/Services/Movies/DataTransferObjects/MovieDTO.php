@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\API\OMBD\DataTransferObjects;
+namespace App\Services\Movies\DataTransferObjects;
 
 class MovieDTO
 {

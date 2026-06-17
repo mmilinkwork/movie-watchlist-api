@@ -31,7 +31,7 @@ once the model relations exist.
 Simplest endpoint, no real complexity. Placed last as the lowest-risk,
 lowest-effort item.
 
-### 7. Authorization (Laravel Sanctum)
+### 7. Authorization (Laravel Sanctum) -- this was a mistake, cuz we need Auth to sync with wishlist, so it needs to go up.
 Wraps everything above. Deliberately last: easier to retrofit auth onto
 working endpoints than to fight auth issues while still building business
 logic. All routes will be scoped to the authenticated user once this

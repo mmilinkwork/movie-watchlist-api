@@ -2,10 +2,10 @@
 
 namespace App\Services\API\OMBD\Contracts;
 
-use App\Services\Movies\DataTransferObjects\AddMovieToWatchlistDTO;
+use App\Services\API\OMBD\DataTransferObjects\FetchMovieDTO;
 use App\Services\Movies\DataTransferObjects\MovieDTO;
 
 interface MovieApiIntegrationServiceInterface
 {
-    public function get(AddMovieToWatchlistDTO $addMovieToWatchlistDTO): MovieDTO;
+    public function get(FetchMovieDTO $addMovieToWatchlistDTO): MovieDTO;
 }

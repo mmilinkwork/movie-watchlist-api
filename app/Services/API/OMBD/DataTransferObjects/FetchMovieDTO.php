@@ -2,7 +2,7 @@
 
 namespace App\Services\API\OMBD\DataTransferObjects;
 
-class AddMovieToWatchlistDTO
+class FetchMovieDTO
 {
     public readonly bool $isTitle;
     public readonly ?string $title;

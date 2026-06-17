@@ -3,8 +3,8 @@
 namespace App\Services\API\OMBD;
 
 use App\Services\API\OMBD\Contracts\MovieApiIntegrationServiceInterface;
+use App\Services\API\OMBD\DataTransferObjects\FetchMovieDTO;
 use App\Services\Movies\Contracts\StoreMovieInterface;
-use App\Services\Movies\DataTransferObjects\AddMovieToWatchlistDTO;
 use App\Services\Movies\DataTransferObjects\MovieDTO;
 use App\Services\Movies\MovieService;
 
@@ -21,10 +21,10 @@ class OMBDService implements Contracts\OMBDServiceInterface
      * Based on ombd_id or title, we are fetching Movie from API or from Database/Cache.
      * If movie already exists in Database, we will not call API request.
      *
-     * @param AddMovieToWatchlistDTO $addMovieToWatchlistDTO
+     * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return MovieDTO|null
      */
-    public function fetch(AddMovieToWatchlistDTO $addMovieToWatchlistDTO): ?MovieDTO
+    public function fetch(FetchMovieDTO $addMovieToWatchlistDTO): ?MovieDTO
     {
 
         if (!$this->movieExists($addMovieToWatchlistDTO))
@@ -59,10 +59,10 @@ class OMBDService implements Contracts\OMBDServiceInterface
     /**
      * Check if movie already exists in Database.
      *
-     * @param AddMovieToWatchlistDTO $addMovieToWatchlistDTO
+     * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return false
      */
-    private function movieExists(AddMovieToWatchlistDTO $addMovieToWatchlistDTO)
+    private function movieExists(FetchMovieDTO $addMovieToWatchlistDTO)
     {
         //to do
         return false;

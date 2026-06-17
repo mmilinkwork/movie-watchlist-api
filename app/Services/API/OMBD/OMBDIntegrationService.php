@@ -3,7 +3,7 @@
 namespace App\Services\API\OMBD;
 
 use App\Services\API\OMBD\Contracts\MovieApiIntegrationServiceInterface;
-use App\Services\Movies\DataTransferObjects\AddMovieToWatchlistDTO;
+use App\Services\API\OMBD\DataTransferObjects\FetchMovieDTO;
 use App\Services\Movies\DataTransferObjects\MovieDTO;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -22,10 +22,10 @@ class OMBDIntegrationService implements MovieApiIntegrationServiceInterface
     /**
      * Executes API call to third party API - OMBD API.
      *
-     * @param AddMovieToWatchlistDTO $addMovieToWatchlistDTO
+     * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return MovieDTO
      */
-    public function get(AddMovieToWatchlistDTO $addMovieToWatchlistDTO): MovieDTO
+    public function get(FetchMovieDTO $addMovieToWatchlistDTO): MovieDTO
     {
         try {
             $response = Http::timeout(5)->get($this->baseUrl, $this->createQueryString($addMovieToWatchlistDTO));
@@ -45,10 +45,10 @@ class OMBDIntegrationService implements MovieApiIntegrationServiceInterface
     /**
      * Create array that is required from OMBD API for query string.
      *
-     * @param AddMovieToWatchlistDTO $addMovieToWatchlistDTO
+     * @param FetchMovieDTO $addMovieToWatchlistDTO
      * @return array
      */
-    private function createQueryString(AddMovieToWatchlistDTO $addMovieToWatchlistDTO): array
+    private function createQueryString(FetchMovieDTO $addMovieToWatchlistDTO): array
     {
         if ($addMovieToWatchlistDTO->isTitle)
         {
